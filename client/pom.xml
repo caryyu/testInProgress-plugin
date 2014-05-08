@@ -7,7 +7,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>	
 	<artifactId>testInProgress-client</artifactId>
-	<version>1.2</version>
+	<version>1.2-SNAPSHOT</version>
 	<developers>
 		<developer>
 			<id>cchabanois</id>
