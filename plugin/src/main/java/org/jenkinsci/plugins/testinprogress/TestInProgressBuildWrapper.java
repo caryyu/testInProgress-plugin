@@ -17,16 +17,22 @@ import hudson.tasks.BuildWrapperDescriptor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
 import java.util.Map;
 
-import org.jenkinsci.plugins.testinprogress.events.build.BuildTestEventsGenerator;
-import org.jenkinsci.plugins.testinprogress.events.build.IBuildTestEventListener;
-import org.jenkinsci.plugins.testinprogress.events.build.TestRunIds;
-import org.jenkinsci.plugins.testinprogress.events.run.IRunTestEventListener;
-import org.jenkinsci.plugins.testinprogress.filters.StackTraceFilter;
+import org.jenkinsci.testinprogress.server.build.BuildTestResults;
+import org.jenkinsci.testinprogress.server.events.TestEventsReceiver;
+import org.jenkinsci.testinprogress.server.events.build.BuildTestEventsGenerator;
+import org.jenkinsci.testinprogress.server.events.build.IBuildTestEventListener;
+import org.jenkinsci.testinprogress.server.events.build.TestRunIds;
+import org.jenkinsci.testinprogress.server.events.run.IRunTestEventListener;
+import org.jenkinsci.testinprogress.server.filters.StackTraceFilter;
+import org.jenkinsci.testinprogress.server.listeners.BuildTestStats;
+import org.jenkinsci.testinprogress.server.listeners.RunningBuildTestEvents;
+import org.jenkinsci.testinprogress.server.listeners.SaveTestEventsListener;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -56,8 +62,9 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 				launcher.getChannel(), 0, new ForwarderImpl(testRunIds,
 						saveTestEventsListener, runningBuildTestEvents,
 						buildTestStats));
-		final BuildTestResults testEvents = new BuildTestResults(build,
-				testRunIds, runningBuildTestEvents, buildTestStats);
+		final BuildTestResults testEvents = new BuildTestResults(new File(
+				build.getRootDir(), UNIT_EVENTS_DIR), testRunIds,
+				runningBuildTestEvents, buildTestStats);
 		TestInProgressRunAction testInProgressRunAction = new TestInProgressRunAction(
 				build, testEvents);
 		build.addAction(testInProgressRunAction);
@@ -111,14 +118,16 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 
 	@Override
 	public DescriptorImpl getDescriptor() {
-		return (DescriptorImpl) super.getDescriptor();
+		return DESCRIPTOR;
 	}
 
 	@Extension
+	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+	
 	public static final class DescriptorImpl extends BuildWrapperDescriptor {
 
 		public DescriptorImpl() {
-			super();
+			super(TestInProgressBuildWrapper.class);
 			load();
 		}
 
@@ -149,13 +158,20 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		}
 
 		public OutputStream connect(OutputStream out) throws IOException {
-			PipedOutputStream pipedOutputStream = new PipedOutputStream();
-			PipedInputStream pipedInputStream = new PipedInputStream();
-			pipedOutputStream.connect(pipedInputStream);
-			new TestEventsReceiverThread("Test events receiver",
+			Pipe pipe = Pipe.open();
+			Pipe.SinkChannel sinkChannel = pipe.sink();
+			Pipe.SourceChannel sourceChannel = pipe.source();
+			OutputStream pipedOutputStream = Channels.newOutputStream(sinkChannel);
+			InputStream pipedInputStream = Channels.newInputStream(sourceChannel);
+			
+			BuildTestEventsGenerator buildTestEventsGenerator = new BuildTestEventsGenerator(
+					testRunIds, listeners); 
+			Runnable runnable = new TestEventsReceiver(
 					pipedInputStream, new StackTraceFilter(),
-					new IRunTestEventListener[] { new BuildTestEventsGenerator(
-							testRunIds, listeners) }).start();
+					new IRunTestEventListener[] { buildTestEventsGenerator });
+			Thread thread = new Thread(runnable);
+			thread.setName("Test events receiver");
+			thread.start();
 			return new RemoteOutputStream(pipedOutputStream);
 		}
 

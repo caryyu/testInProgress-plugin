@@ -1,0 +1,28 @@
+{"timeStamp":"1414947114155","testCount":6,"messageId":"TESTC","fVersion":"v3"}
+{"testName":"tests.ProgressCalcTestsSuite","testId":"1","timeStamp":"1414947114156","messageId":"TSTTREE","isSuite":true}
+{"parentId":"1","testName":"tests.CalcTestsSuite","testId":"2","timeStamp":"1414947114157","messageId":"TSTTREE","isSuite":true}
+{"parentId":"2","testName":"tests.CalcTest","testId":"3","timeStamp":"1414947114158","messageId":"TSTTREE","isSuite":true}
+{"parentId":"3","testName":"testAddWillSucceed(tests.CalcTest)","testId":"4","timeStamp":"1414947114158","messageId":"TSTTREE","isSuite":false}
+{"parentId":"3","testName":"testFail(tests.CalcTest)","testId":"5","timeStamp":"1414947114158","messageId":"TSTTREE","isSuite":false}
+{"parentId":"3","testName":"testIgnored(tests.CalcTest)","testId":"6","timeStamp":"1414947114158","messageId":"TSTTREE","isSuite":false}
+{"parentId":"3","testName":"testAddWillFail(tests.CalcTest)","testId":"7","timeStamp":"1414947114159","messageId":"TSTTREE","isSuite":false}
+{"parentId":"2","testName":"tests.CalcTest2","testId":"8","timeStamp":"1414947114159","messageId":"TSTTREE","isSuite":true}
+{"parentId":"8","testName":"testStringCompare(tests.CalcTest2)","testId":"9","timeStamp":"1414947114159","messageId":"TSTTREE","isSuite":false}
+{"parentId":"8","testName":"testDivideBy0(tests.CalcTest2)","testId":"10","timeStamp":"1414947114159","messageId":"TSTTREE","isSuite":false}
+{"testName":"testAddWillSucceed(tests.CalcTest)","testId":"4","timeStamp":"1414947114159","messageId":"TESTS"}
+{"testName":"testAddWillSucceed(tests.CalcTest)","testId":"4","timeStamp":"1414947114160","messageId":"TESTE"}
+{"testName":"testFail(tests.CalcTest)","testId":"5","timeStamp":"1414947114160","messageId":"TESTS"}
+{"actualMsg":"","errorTrace":"java.lang.AssertionError: this test failed\n\tat tests.CalcTest.testFail(CalcTest.java:28)\n","testName":"testFail(tests.CalcTest)","testId":"5","timeStamp":"1414947114166","expectedMsg":"","messageId":"FAILED"}
+{"testName":"testFail(tests.CalcTest)","testId":"5","timeStamp":"1414947114167","messageId":"TESTE"}
+{"ignored":true,"testName":"testIgnored(tests.CalcTest)","testId":"6","timeStamp":"1414947114168","messageId":"TESTS"}
+{"ignored":true,"testName":"testIgnored(tests.CalcTest)","testId":"6","timeStamp":"1414947114168","messageId":"TESTE"}
+{"testName":"testAddWillFail(tests.CalcTest)","testId":"7","timeStamp":"1414947114168","messageId":"TESTS"}
+{"actualMsg":"","errorTrace":"java.lang.AssertionError: expected:<6> but was:<8>\n\tat tests.CalcTest.testAddWillFail(CalcTest.java:18)\n","testName":"testAddWillFail(tests.CalcTest)","testId":"7","timeStamp":"1414947114171","expectedMsg":"","messageId":"FAILED"}
+{"testName":"testAddWillFail(tests.CalcTest)","testId":"7","timeStamp":"1414947114172","messageId":"TESTE"}
+{"testName":"testStringCompare(tests.CalcTest2)","testId":"9","timeStamp":"1414947114172","messageId":"TESTS"}
+{"actualMsg":"23","errorTrace":"org.junit.ComparisonFailure: expected:<[5]> but was:<[23]>\n\tat tests.CalcTest2.testStringCompare(CalcTest2.java:11)\n","testName":"testStringCompare(tests.CalcTest2)","testId":"9","timeStamp":"1414947114175","expectedMsg":"5","messageId":"FAILED"}
+{"testName":"testStringCompare(tests.CalcTest2)","testId":"9","timeStamp":"1414947114177","messageId":"TESTE"}
+{"testName":"testDivideBy0(tests.CalcTest2)","testId":"10","timeStamp":"1414947114177","messageId":"TESTS"}
+{"errorTrace":"java.lang.ArithmeticException: / by zero\n\tat tests.CalcTest2.testDivideBy0(CalcTest2.java:16)\n\n","testName":"testDivideBy0(tests.CalcTest2)","testId":"10","timeStamp":"1414947114180","messageId":"ERROR"}
+{"testName":"testDivideBy0(tests.CalcTest2)","testId":"10","timeStamp":"1414947114182","messageId":"TESTE"}
+{"timeStamp":"1414947114182","messageId":"RUNTIME","elapsedTime":16}
