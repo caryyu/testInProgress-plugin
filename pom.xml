@@ -1,9 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.jenkins-ci.plugins</groupId>
 	<artifactId>testInProgress-aggregate</artifactId>
-	<version>1.4</version>
+	<version>1.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>testInProgress :: Aggregate POM</name>
 
@@ -23,7 +23,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/testInProgress-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/testInProgress-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/testInProgress-plugin</url>
-	  <tag>testInProgress-aggregate-1.4</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<build>
