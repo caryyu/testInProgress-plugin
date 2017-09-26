@@ -2,13 +2,15 @@ package org.jenkinsci.testinprogress.server.events.build;
 
 import org.jenkinsci.testinprogress.server.events.run.IRunTestEvent;
 
+import java.io.Serializable;
+
 /**
  * A test event in a build
  * 
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class BuildTestEvent {
+public class BuildTestEvent implements Serializable {
 	private final String runId;
 	private final IRunTestEvent testEvent;
 

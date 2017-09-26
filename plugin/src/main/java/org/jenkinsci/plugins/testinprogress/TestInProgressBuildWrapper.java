@@ -69,7 +69,7 @@ public class TestInProgressBuildWrapper extends SimpleBuildWrapper implements Se
 		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();
 
-		initialEnvironment.put("TEST_IN_PROGRESS_PORT", String.valueOf(listeningPort.getPort()));
+		context.getEnv().put("TEST_IN_PROGRESS_PORT", String.valueOf(listeningPort.getPort()));
 		context.setDisposer(new Disposer() {
 			@Override
 			public void tearDown(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
