@@ -1,6 +1,8 @@
 package org.jenkinsci.plugins.testinprogress;
 
 import static org.jenkinsci.plugins.testinprogress.JenkinsAntJobProjectBuilder.aJenkinsAntJobProject;
+import static org.jenkinsci.plugins.testinprogress.JenkinsAntJobProjectBuilder.configureDefaultAnt;
+
 import hudson.model.Run;
 import hudson.slaves.DumbSlave;
 import hudson.tasks.Ant;
@@ -17,7 +19,7 @@ public class AntProjectWithOldClient11Test {
 
 	@Rule
 	public JenkinsRule jenkinsRule = new JenkinsRule() {
-		protected void before() throws Throwable {
+		public void before() throws Throwable {
 			contextPath = "/jenkins";
 			super.before();
 		};
@@ -31,9 +33,10 @@ public class AntProjectWithOldClient11Test {
 		System.out.println("Jenkins url :"+jenkinsRule.jenkins.getRootUrl());
 		// Create a slave, install ant
 		jenkinsRule.jenkins.setCrumbIssuer(null);
-		Ant.AntInstallation antInstallation = jenkinsRule.configureDefaultAnt();
+
+		Ant.AntInstallation antInstallation = configureDefaultAnt(jenkinsRule.jenkins,jenkinsRule.createTmpDir());
 		DumbSlave slave = jenkinsRule.createOnlineSlave();
-		
+
 		// create our job
 		JenkinsJob jenkinsJob = aJenkinsAntJobProject(jenkinsRule.jenkins,
 				"antTestProjectWithClient11").withAntInstallation(antInstallation)

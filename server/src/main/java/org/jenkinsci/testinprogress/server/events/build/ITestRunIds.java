@@ -1,5 +1,6 @@
 package org.jenkinsci.testinprogress.server.events.build;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public interface ITestRunIds {
+public interface ITestRunIds extends Serializable {
 
 	public abstract List<String> getRunIds();
 

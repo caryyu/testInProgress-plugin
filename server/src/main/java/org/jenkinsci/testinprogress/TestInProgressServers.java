@@ -1,6 +1,7 @@
 package org.jenkinsci.testinprogress;
 
 import java.io.File;
+import java.io.Serializable;
 
 import org.jenkinsci.testinprogress.httpserver.TestInProgressHttpServer;
 import org.jenkinsci.testinprogress.server.BuildTestEventsServer;
@@ -21,7 +22,7 @@ import org.jenkinsci.testinprogress.utils.FreePortsFinder;
  * @author cchabanois
  *
  */
-public class TestInProgressServers {
+public class TestInProgressServers implements Serializable {
 	private final TestEventsDirs testEventsDirs;
 	private final TestRunIds testRunIds = new TestRunIds();
 	private final RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();

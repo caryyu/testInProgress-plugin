@@ -1,5 +1,6 @@
 package org.jenkinsci.testinprogress.server.listeners;
 
+import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;

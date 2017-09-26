@@ -2,6 +2,7 @@ package org.jenkinsci.testinprogress.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -19,7 +20,7 @@ import org.jenkinsci.testinprogress.server.listeners.SaveTestEventsListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BuildTestEventsServer {
+public class BuildTestEventsServer implements Serializable {
 	private ExecutorService executorService;
 	private final int port;
 	private final StackTraceFilter stackTraceFilter;

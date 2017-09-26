@@ -1,6 +1,7 @@
 package org.jenkinsci.testinprogress.server.build;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
 
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;

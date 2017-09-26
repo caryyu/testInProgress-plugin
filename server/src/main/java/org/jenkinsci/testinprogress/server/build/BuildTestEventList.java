@@ -1,5 +1,6 @@
 package org.jenkinsci.testinprogress.server.build;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
@@ -10,7 +11,7 @@ import org.jenkinsci.testinprogress.server.events.build.BuildTestEvent;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  *
  */
-public class BuildTestEventList {
+public class BuildTestEventList implements Serializable {
 	private final boolean isBuilding;
 	private final List<BuildTestEvent> buildTestEvents;
 	

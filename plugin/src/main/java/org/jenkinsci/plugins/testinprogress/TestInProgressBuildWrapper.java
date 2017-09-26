@@ -1,28 +1,23 @@
 package org.jenkinsci.plugins.testinprogress;
 
+import hudson.EnvVars;
 import hudson.Extension;
+import hudson.FilePath;
 import hudson.Launcher;
-import hudson.model.BuildListener;
-import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.Callable;
 import hudson.remoting.Channel;
 import hudson.remoting.RemoteOutputStream;
 import hudson.remoting.VirtualChannel;
 import hudson.remoting.forward.Forwarder;
 import hudson.remoting.forward.ListeningPort;
-import hudson.remoting.forward.PortForwarder;
-import hudson.tasks.BuildWrapper;
 import hudson.tasks.BuildWrapperDescriptor;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.Pipe;
-import java.util.Map;
-
+import jenkins.YesNoMaybe;
+import jenkins.security.Roles;
+import jenkins.tasks.SimpleBuildWrapper;
+import org.jenkinsci.remoting.RoleChecker;
 import org.jenkinsci.testinprogress.server.build.BuildTestResults;
 import org.jenkinsci.testinprogress.server.events.TestEventsReceiver;
 import org.jenkinsci.testinprogress.server.events.build.BuildTestEventsGenerator;
@@ -35,6 +30,10 @@ import org.jenkinsci.testinprogress.server.listeners.RunningBuildTestEvents;
 import org.jenkinsci.testinprogress.server.listeners.SaveTestEventsListener;
 import org.kohsuke.stapler.DataBoundConstructor;
 
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.Pipe;
+
 /**
  * This build wrapper communicates to the process being started the port to use
  * to report test progress (using a env var). It also forward test messages from
@@ -43,7 +42,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Cedric Chabanois (cchabanois at gmail.com)
  * 
  */
-public class TestInProgressBuildWrapper extends BuildWrapper {
+public class TestInProgressBuildWrapper extends SimpleBuildWrapper implements Serializable {
 	private static final String UNIT_EVENTS_DIR = "unitevents";
 
 	@DataBoundConstructor
@@ -51,8 +50,8 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 	}
 
 	@Override
-	public Environment setUp(AbstractBuild build, Launcher launcher,
-			BuildListener listener) throws IOException, InterruptedException {
+	public void setUp(Context context, Run<?, ?> build, FilePath workspace, Launcher launcher,
+					  TaskListener listener, EnvVars initialEnvironment) throws IOException, InterruptedException {
 		TestRunIds testRunIds = new TestRunIds();
 		RunningBuildTestEvents runningBuildTestEvents = new RunningBuildTestEvents();
 		final SaveTestEventsListener saveTestEventsListener = new SaveTestEventsListener(
@@ -69,24 +68,16 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 				build, testEvents);
 		build.addAction(testInProgressRunAction);
 		saveTestEventsListener.init();
-		return new Environment() {
 
+		initialEnvironment.put("TEST_IN_PROGRESS_PORT", String.valueOf(listeningPort.getPort()));
+		context.setDisposer(new Disposer() {
 			@Override
-			public void buildEnvVars(Map<String, String> env) {
-				env.put("TEST_IN_PROGRESS_PORT",
-						String.valueOf(listeningPort.getPort()));
-			}
-
-			@Override
-			public boolean tearDown(AbstractBuild build, BuildListener listener)
-					throws IOException, InterruptedException {
+			public void tearDown(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener) throws IOException, InterruptedException {
 				saveTestEventsListener.destroy();
 				testEvents.onBuildComplete();
 				listeningPort.close();
-				return true;
 			}
-
-		};
+		});
 	}
 
 	/**
@@ -102,6 +93,11 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		final Forwarder proxy = ch.export(Forwarder.class, forwarder);
 
 		return ch.call(new Callable<ListeningPort, IOException>() {
+			@Override
+			public void checkRoles(RoleChecker roleChecker) throws SecurityException {
+				roleChecker.check(this, Roles.MASTER, Roles.SLAVE);
+			}
+
 			public ListeningPort call() throws IOException {
 				PortForwarder t = new PortForwarder(acceptingPort, proxy);
 				t.start();
@@ -116,20 +112,8 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		});
 	}
 
-	@Override
-	public DescriptorImpl getDescriptor() {
-		return DESCRIPTOR;
-	}
-
-	@Extension
-	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
-	
+	@Extension(dynamicLoadable = YesNoMaybe.YES)
 	public static final class DescriptorImpl extends BuildWrapperDescriptor {
-
-		public DescriptorImpl() {
-			super(TestInProgressBuildWrapper.class);
-			load();
-		}
 
 		@Override
 		public boolean isApplicable(AbstractProject<?, ?> item) {
@@ -140,7 +124,6 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		public String getDisplayName() {
 			return "Show tests in progress";
 		}
-
 	}
 
 	/**
@@ -179,7 +162,11 @@ public class TestInProgressBuildWrapper extends BuildWrapper {
 		 * When sent to the remote node, send a proxy.
 		 */
 		private Object writeReplace() {
-			return Channel.current().export(Forwarder.class, this);
+			if(Channel.current() != null) {
+				return Channel.current().export(Forwarder.class, this);
+			} else {
+				return this;
+			}
 		}
 	}
 

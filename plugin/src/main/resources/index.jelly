@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin allows you to see how the junit tests progress during a build.
 </div>

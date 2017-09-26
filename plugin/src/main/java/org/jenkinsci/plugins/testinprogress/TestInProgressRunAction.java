@@ -24,15 +24,15 @@ public class TestInProgressRunAction implements Action {
 	private static final String ICON_JUNIT_SUCCESS_FILENAME = "/plugin/testInProgress/images/junitsucc.gif";
 	private static final String ICON_JUNIT_ERR_FILENAME = "/plugin/testInProgress/images/juniterr.gif";
 	private final BuildTestResults buildTestResults;
-	private final AbstractBuild build;
+	private final Run<?, ?> build;
 
-	public TestInProgressRunAction(AbstractBuild build,
+	public TestInProgressRunAction(Run<?, ?> build,
 			BuildTestResults buildTestResults) {
 		this.build = build;
 		this.buildTestResults = buildTestResults;
 	}
 
-	public AbstractBuild getBuild() {
+	public Run<?, ?> getBuild() {
 		return build;
 	}
 
